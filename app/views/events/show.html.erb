@@ -101,19 +101,19 @@
             <p>    <%= link_to 'Join', join_event_path(@event), class: "btn btn-primary join-leave" if policy(@event).join? %></p>
           <% end %>
         </div>
-        <p>
+        <div>
           <strong>Where? </strong><%= @event.place.name %>
-        </p>
+        </div>
 
-            <p>
-              <%= render 'location' %>
-            </p>
+        <div>
+          <%= render 'location' %>
+        </div>
 
-        <p>
+        <div>
           <%= render 'weather' %>
-        </p>
+        </div>
 
-        <p>
+        <div>
           <% if !@event.place.owner.blank? %>
             <strong>Place owner:</strong>
             <%= @event.place.owner %>
@@ -123,7 +123,7 @@
             <strong>Contact owner:</strong>
             <%= @event.place.phone_number %>
           <% end %>
-        </p>
+        </div>
       </div>
       <div>
       </div>
