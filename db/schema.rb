@@ -82,7 +82,7 @@ ActiveRecord::Schema.define(version: 2019_03_04_213322) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "username", null: false
+    t.string "username", default: "", null: false
     t.string "avatar"
     t.text "description"
     t.string "city"
