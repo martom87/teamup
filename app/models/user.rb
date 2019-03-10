@@ -1,4 +1,3 @@
-require 'securerandom'
 class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
@@ -15,32 +14,25 @@ class User < ApplicationRecord
 
   accepts_nested_attributes_for :skills, :allow_destroy => true
 
-
   def self.from_omniauth(auth)
-    where(provider: auth.provider, uid: auth.uid).first_or_initialize.tap do |user|
-      user.provider = auth.provider
-      user.uid = auth.uid
-      user.username = auth.info.first_name
+    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+      user.token = auth.credentials.token
       user.email = auth.info.email
+      user.expires = auth.credentials.expires
+      user.expires_at = auth.credentials.expires_at
+      user.refresh_token = auth.credentials.refresh_token
       user.password = SecureRandom.urlsafe_base64
       user.save!
     end
   end
 
-rescue ActiveRecord::RecordInvalid
-  ::NewRelic::Agent.add_custom_attributes(auth)
-  raise
+
+  def create_event_as_owner(attributes)
+    event = events.create(attributes)
+    event.tap {|event| event.participations.find_by(user: self)&.owner!}
+  end
+
+  def skill_level(sport_name)
+    self.skills.joins(:sport).find_by("sports.name = ?", sport_name)&.level
+  end
 end
-
-
-def create_event_as_owner(attributes)
-  event = events.create(attributes)
-  event.tap {|event| event.participations.find_by(user: self)&.owner!}
-end
-
-def skill_level(sport_name)
-  self.skills.joins(:sport).find_by("sports.name = ?", sport_name)&.level
-end
-
-
-
