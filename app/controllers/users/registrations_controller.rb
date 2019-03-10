@@ -5,19 +5,23 @@ class Users::RegistrationsController < Devise::RegistrationsController
 
   def configure_permitted_parameters
     devise_parameter_sanitizer.permit(
-       :account_update,
+        :account_update,
         keys: [
-          :email, :username, :password, :password_confirmation, :current_password,
-          :avatar, :description, :city,
-          skills_attributes: [:id, :level, :sport_id, :_destroy]
+            :email, :username, :password, :password_confirmation, :current_password,
+            :avatar, :description, :city,
+            skills_attributes: [:id, :level, :sport_id, :_destroy]
         ]
-      )
-      devise_parameter_sanitizer.permit(
-         :sign_up,
-          keys: [
+    )
+    devise_parameter_sanitizer.permit(
+        :sign_up,
+        keys: [
             :email, :username, :password, :password_confirmation
-          ]
-        )
+        ]
+    )
+  end
+
+  def update_resource(resource, params)
+    resource.update_without_password(params.except("current_password"))
   end
 
 end
